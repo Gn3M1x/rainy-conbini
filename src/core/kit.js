@@ -38,8 +38,12 @@ export class Batcher {
   push(mesh) {
     const mat = mesh.material;
     if (!mat || Array.isArray(mat)) return;
-    let arr = this.byMat.get(mat);
-    if (!arr) { arr = []; this.byMat.set(mat, arr); }
+    // A material may be shared by several compositing layers. Merging those
+    // layers drops their order and lets camera distance reorder wet ground.
+    let layers = this.byMat.get(mat);
+    if (!layers) { layers = new Map(); this.byMat.set(mat, layers); }
+    let arr = layers.get(mesh.renderOrder);
+    if (!arr) { arr = []; layers.set(mesh.renderOrder, arr); }
     const src = mesh.geometry;
     const g = src.index ? src.toNonIndexed() : src.clone();
     // 统一属性，避免合并失败
@@ -55,23 +59,26 @@ export class Batcher {
   }
   flush(parent) {
     const made = [];
-    for (const [mat, geos] of this.byMat) {
-      if (!geos.length) continue;
-      let merged;
-      try {
-        merged = mergeGeometries(geos, false);
-      } catch (e) {
-        console.warn('merge error', e);
+    for (const [mat, layers] of this.byMat) {
+      for (const [renderOrder, geos] of layers) {
+        if (!geos.length) continue;
+        let merged;
+        try {
+          merged = mergeGeometries(geos, false);
+        } catch (e) {
+          console.warn('merge error', e);
+        }
+        geos.forEach((g) => g.dispose());
+        if (!merged) continue;
+        const mesh = new THREE.Mesh(merged, mat);
+        const basic = mat.isMeshBasicMaterial;
+        mesh.castShadow = !basic && !mat.transparent;
+        mesh.receiveShadow = !basic;
+        mesh.renderOrder = renderOrder;
+        mesh.matrixAutoUpdate = false;
+        parent.add(mesh);
+        made.push(mesh);
       }
-      geos.forEach((g) => g.dispose());
-      if (!merged) continue;
-      const mesh = new THREE.Mesh(merged, mat);
-      const basic = mat.isMeshBasicMaterial;
-      mesh.castShadow = !basic && !mat.transparent;
-      mesh.receiveShadow = !basic;
-      mesh.matrixAutoUpdate = false;
-      parent.add(mesh);
-      made.push(mesh);
     }
     this.byMat.clear();
     return made;

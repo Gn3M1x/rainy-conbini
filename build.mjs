@@ -23,4 +23,5 @@ const html = tpl.replace('/*__BUNDLE__*/', () => code);
 
 fs.mkdirSync(path.join(ROOT, 'out'), { recursive: true });
 fs.writeFileSync(path.join(ROOT, 'out/rainy-conbini.html'), html);
-console.log('built out/rainy-conbini.html', (html.length / 1024).toFixed(0) + 'KB');
+fs.writeFileSync(path.join(ROOT, 'index.html'), html);
+console.log('built index.html + out/rainy-conbini.html', (html.length / 1024).toFixed(0) + 'KB');

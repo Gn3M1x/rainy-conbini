@@ -127,7 +127,8 @@ export function buildStore(batch, ctx) {
   // 灯板
   for (let i = 0; i < 3; i++) {
     for (let j = 0; j < 2; j++) {
-      K.box(M.lightPanel, 0.52, 0.012, 0.5, -2.0 + i * 0.86, S.ceilY - 0.008, -0.95 - j * 0.72);
+      // 灯片略低于外框，避免两块底面完全共面时闪烁。
+      K.box(M.lightPanel, 0.52, 0.012, 0.5, -2.0 + i * 0.86, S.ceilY - 0.012, -0.95 - j * 0.72);
       K.box(M.aluD, 0.56, 0.02, 0.54, -2.0 + i * 0.86, S.ceilY - 0.004, -0.95 - j * 0.72);
     }
   }

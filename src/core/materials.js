@@ -1,6 +1,9 @@
 // 三渲二材质库：MeshToonMaterial + 阶梯渐变贴图 + 边缘光注入 + 无光照自发光材质
 import * as THREE from 'three';
 
+// Ground overlays compose before other transparent objects (glass and rain).
+export const GROUND_LAYER = Object.freeze({ surface: -30, detail: -20, light: -10 });
+
 /* ---------------------------------- 调色板 --------------------------------- */
 export const C = {
   // 底座

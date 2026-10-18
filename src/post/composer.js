@@ -10,38 +10,87 @@ import { Pass, FullScreenQuad } from 'three/addons/postprocessing/Pass.js';
 
 /* --------------------------- 法线 + 深度 预渲染通道 -------------------------- */
 class NormalDepthPass extends Pass {
-  constructor(scene, camera, hidden = []) {
+  constructor(scene, camera) {
     super();
     this.scene = scene;
     this.camera = camera;
-    this.hidden = hidden;
     this.rt = new THREE.WebGLRenderTarget(4, 4, { type: THREE.HalfFloatType });
     this.rt.depthTexture = new THREE.DepthTexture(4, 4);
     this.rt.depthTexture.format = THREE.DepthFormat;
     this.rt.depthTexture.type = THREE.UnsignedIntType;
     this.rt.depthTexture.minFilter = THREE.NearestFilter;
     this.rt.depthTexture.magFilter = THREE.NearestFilter;
-    this.mat = new THREE.MeshNormalMaterial();
+    this.materials = new Map();
+    this.rt.texture.minFilter = THREE.NearestFilter;
+    this.rt.texture.magFilter = THREE.NearestFilter;
     this.needsSwap = false;
   }
   setSize(w, h) {
-    this.rt.setSize(Math.max(2, Math.round(w)), Math.max(2, Math.round(h)));
+    this.rt.setSize(Math.max(2, Math.floor(w)), Math.max(2, Math.floor(h)));
+  }
+  normalMaterial(source) {
+    let material = this.materials.get(source);
+    if (!material) {
+      material = new THREE.MeshNormalMaterial({
+        side: source.side,
+        // Transparent overlays have no opaque silhouette. Keeping them out also
+        // prevents the invisible rectangle around a decal from becoming an edge.
+        visible: source.visible && !source.transparent && source.depthWrite,
+        polygonOffset: source.polygonOffset,
+        polygonOffsetFactor: source.polygonOffsetFactor,
+        polygonOffsetUnits: source.polygonOffsetUnits,
+      });
+      this.materials.set(source, material);
+    }
+    return material;
   }
   render(renderer) {
-    const vis = this.hidden.map((o) => o.visible);
-    this.hidden.forEach((o) => { o.visible = false; });
+    const changed = [];
     const old = this.scene.overrideMaterial;
     const oldBg = this.scene.background;
-    this.scene.background = null;
-    this.scene.overrideMaterial = this.mat;
     const prev = renderer.getRenderTarget();
-    renderer.setRenderTarget(this.rt);
-    renderer.clear();
-    renderer.render(this.scene, this.camera);
-    renderer.setRenderTarget(prev);
-    this.scene.overrideMaterial = old;
-    this.scene.background = oldBg;
-    this.hidden.forEach((o, i) => { o.visible = vis[i]; });
+    const clearColor = renderer.getClearColor(new THREE.Color());
+    const clearAlpha = renderer.getClearAlpha();
+    const shadowAutoUpdate = renderer.shadowMap.autoUpdate;
+    try {
+      this.scene.traverse((o) => {
+        if (!o.isMesh || !o.visible) return;
+        if (o.isReflector) {
+          // Never run the mirror's recursive onBeforeRender in this pass.
+          changed.push([o, o.material, o.visible]);
+          o.visible = false;
+          return;
+        }
+        changed.push([o, o.material, o.visible]);
+        o.material = Array.isArray(o.material)
+          ? o.material.map((m) => this.normalMaterial(m))
+          : this.normalMaterial(o.material);
+      });
+      // Opaque signs and light boxes must still occlude the objects behind them.
+      // The old blanket hidden list removed these surfaces along with the glass.
+      this.scene.overrideMaterial = null;
+      this.scene.background = null;
+      renderer.shadowMap.autoUpdate = false;
+      renderer.setRenderTarget(this.rt);
+      renderer.setClearColor(0x000000, 0);
+      renderer.clear();
+      renderer.render(this.scene, this.camera);
+    } finally {
+      renderer.setRenderTarget(prev);
+      renderer.setClearColor(clearColor, clearAlpha);
+      renderer.shadowMap.autoUpdate = shadowAutoUpdate;
+      this.scene.overrideMaterial = old;
+      this.scene.background = oldBg;
+      changed.forEach(([o, material, visible]) => {
+        o.material = material;
+        o.visible = visible;
+      });
+    }
+  }
+  dispose() {
+    this.rt.dispose();
+    this.materials.forEach((m) => m.dispose());
+    this.materials.clear();
   }
 }
 
@@ -146,19 +195,20 @@ const OutlineComposite = {
 };
 
 /* --------------------------------- 组装管线 -------------------------------- */
-export function createPost(renderer, scene, camera, hidden = []) {
-  const size = renderer.getSize(new THREE.Vector2());
+export function createPost(renderer, scene, camera) {
+  // Use integer drawing-buffer pixels for every pass. Multiplying CSS sizes by
+  // a fractional DPR independently can give the normal pass a one-pixel offset.
+  const res = renderer.getDrawingBufferSize(new THREE.Vector2());
   const composer = new EffectComposer(renderer);
-  composer.setPixelRatio(renderer.getPixelRatio());
-  composer.setSize(size.x, size.y);
+  composer.setPixelRatio(1);
+  composer.setSize(res.x, res.y);
 
   const renderPass = new RenderPass(scene, camera);
   composer.addPass(renderPass);
 
-  const normalPass = new NormalDepthPass(scene, camera, hidden);
+  const normalPass = new NormalDepthPass(scene, camera);
   composer.addPass(normalPass);
 
-  const res = renderer.getDrawingBufferSize(new THREE.Vector2());
   const bloom = new UnrealBloomPass(new THREE.Vector2(res.x, res.y), 0.22, 0.28, 1.06);
   composer.addPass(bloom);
 
@@ -179,14 +229,17 @@ export function createPost(renderer, scene, camera, hidden = []) {
   const output = new OutputPass();
   composer.addPass(output);
 
-  function setSize(w, h) {
+  function setSize() {
     const dbs = renderer.getDrawingBufferSize(new THREE.Vector2());
+    composer.setSize(dbs.x, dbs.y);
     composite.uniforms.uThickness.value = Math.max(1.15, dbs.y / 620);
     composite.uniforms.uResolution.value.copy(dbs);
     composite.uniforms.uNear.value = camera.near;
     composite.uniforms.uFar.value = camera.far;
     bloom.resolution.set(dbs.x, dbs.y);
   }
+
+  setSize();
 
   return {
     composer,

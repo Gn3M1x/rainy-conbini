@@ -1,6 +1,6 @@
 // 底座 + 地面分区 + 路缘 + 标线 + 地面细节
 import * as THREE from 'three';
-import { C, toon, decalMat, gradientMap } from '../core/materials.js';
+import { C, toon, decalMat, gradientMap, GROUND_LAYER } from '../core/materials.js';
 import { Kit } from '../core/kit.js';
 import { makeTex, manhole, roadPaint, parkingStencil } from '../core/tex.js';
 
@@ -79,7 +79,7 @@ function flatMat({ color = 0xffffff, opacity = 1, light = false, map = null, rep
     m.repeat.set(rep[0], rep[1]);
   }
   const opts = {
-    color, map: m, transparent: opacity < 1, opacity, depthWrite: false,
+    color, map: m, transparent: true, opacity, depthWrite: false,
     polygonOffset: true, polygonOffsetFactor: -order, polygonOffsetUnits: -order,
   };
   return light ? new THREE.MeshBasicMaterial(opts) : new THREE.MeshToonMaterial(
@@ -113,22 +113,28 @@ export function buildBase(batch) {
   kit.box(grooveMat, 0.02, 0.01, S, (S / 2 - 0.01), -0.004, 0);
 
   /* ------------------------------ 2. 地面分区 ------------------------------ */
-  const pave = (x0, x1, z0, z1, mat, y = 0.004) => {
-    kit.floorPlane(mat, x1 - x0, z1 - z0, (x0 + x1) / 2, y, (z0 + z1) / 2);
+  const detail = (...args) => {
+    const mesh = kit.floorPlane(...args);
+    mesh.renderOrder = GROUND_LAYER.detail;
+    return mesh;
+  };
+  const pave = (x0, x1, z0, z1, mat, y = 0.004, layer = GROUND_LAYER.detail) => {
+    const mesh = kit.floorPlane(mat, x1 - x0, z1 - z0, (x0 + x1) / 2, y, (z0 + z1) / 2);
+    mesh.renderOrder = layer;
   };
   // 建筑下方（压暗、几乎不反射）
-  pave(...Z.building, flatMat({ color: 0x191d26, opacity: 0.96 }), 0.006);
+  pave(...Z.building, flatMat({ color: 0x191d26, opacity: 0.96 }), 0.006, GROUND_LAYER.surface);
   // 小巷（湿、暗）
-  pave(...Z.alley, flatMat({ color: 0x2b303c, opacity: 0.62 }), 0.005);
+  pave(...Z.alley, flatMat({ color: 0x2b303c, opacity: 0.62 }), 0.005, GROUND_LAYER.surface);
   // 店前广场 / 停车场
-  pave(...Z.plaza, flatMat({ color: 0x333845, opacity: 0.66 }), 0.005);
+  pave(...Z.plaza, flatMat({ color: 0x333845, opacity: 0.66 }), 0.005, GROUND_LAYER.surface);
   // 东侧人行道
-  pave(...Z.sidewalkE, flatMat({ color: 0x8b8f99, opacity: 0.82, map: T.paving, rep: [1, 13] }), 0.006);
+  pave(...Z.sidewalkE, flatMat({ color: 0x8b8f99, opacity: 0.82, map: T.paving, rep: [1, 13] }), 0.006, GROUND_LAYER.surface);
   // 南侧人行道
-  pave(...Z.sidewalkS, flatMat({ color: 0x8b8f99, opacity: 0.82, map: T.paving, rep: [15, 1.6] }), 0.006);
+  pave(...Z.sidewalkS, flatMat({ color: 0x8b8f99, opacity: 0.82, map: T.paving, rep: [15, 1.6] }), 0.006, GROUND_LAYER.surface);
   // 车道（反射最强）
-  pave(...Z.roadS, flatMat({ color: 0x272b36, opacity: 0.5 }), 0.0035);
-  pave(...Z.roadE, flatMat({ color: 0x272b36, opacity: 0.5 }), 0.0035);
+  pave(...Z.roadS, flatMat({ color: 0x272b36, opacity: 0.5 }), 0.0035, GROUND_LAYER.surface);
+  pave(...Z.roadE, flatMat({ color: 0x272b36, opacity: 0.5 }), 0.0035, GROUND_LAYER.surface);
 
   /* ------------------------------- 3. 路缘石 ------------------------------- */
   const curbMat = toon(C.curb);
@@ -164,14 +170,14 @@ export function buildBase(batch) {
   });
   // 车位 P 字
   const pStencil = decalMat(parkingStencil());
-  kit.floorPlane(pStencil, 0.34, 0.34, -2.14, 0.014, 0.2);
-  kit.floorPlane(pStencil, 0.34, 0.34, -1.28, 0.014, 0.2);
+  detail(pStencil, 0.34, 0.34, -2.14, 0.014, 0.2);
+  detail(pStencil, 0.34, 0.34, -1.28, 0.014, 0.2);
   // 车道中心虚线（南侧车道，靠外）
   for (let x = -2.5; x < 0.3; x += 0.42) pave(x, x + 0.22, 2.34, 2.38, paintDim, 0.012);
   // 止まれ 路面文字（东侧车道）
   const stopPaint = decalMat(roadPaint('止まれ'));
-  kit.floorPlane(stopPaint, 0.9, 0.44, 2.12, 0.014, -0.95, { rz: 0 });
-  kit.floorPlane(decalMat(roadPaint('徐行')), 0.62, 0.3, 2.12, 0.014, 2.05);
+  detail(stopPaint, 0.9, 0.44, 2.12, 0.014, -0.95, { rz: 0 });
+  detail(decalMat(roadPaint('徐行')), 0.62, 0.3, 2.12, 0.014, 2.05);
 
   /* ------------------------------ 5. 地面细节 ------------------------------ */
   // 盲道（黄）
@@ -188,9 +194,9 @@ export function buildBase(batch) {
 
   // 井盖
   const mh = decalMat(manhole());
-  kit.floorPlane(mh, 0.36, 0.36, -1.45, 0.017, 1.95);
-  kit.floorPlane(mh, 0.32, 0.32, 2.16, 0.017, 0.35);
-  kit.floorPlane(mh, 0.3, 0.3, 0.28, 0.017, -0.2);
+  detail(mh, 0.36, 0.36, -1.45, 0.017, 1.95);
+  detail(mh, 0.32, 0.32, 2.16, 0.017, 0.35);
+  detail(mh, 0.3, 0.3, 0.28, 0.017, -0.2);
 
   // 人行道分缝线
   const jointMat = toon(C.sidewalkLine, { polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
@@ -203,9 +209,9 @@ export function buildBase(batch) {
 
   // 沥青补丁（深色块，打破单调）
   const patch = flatMat({ color: 0x1c2029, opacity: 0.5 });
-  kit.floorPlane(patch, 0.5, 0.34, -1.9, 0.014, 1.75, { rz: 0.2 });
-  kit.floorPlane(patch, 0.34, 0.5, 1.95, 0.014, -1.6, { rz: -0.12 });
-  kit.floorPlane(patch, 0.26, 0.3, -2.2, 0.014, 0.62, { rz: 0.35 });
+  detail(patch, 0.5, 0.34, -1.9, 0.014, 1.75, { rz: 0.2 });
+  detail(patch, 0.34, 0.5, 1.95, 0.014, -1.6, { rz: -0.12 });
+  detail(patch, 0.26, 0.3, -2.2, 0.014, 0.62, { rz: 0.35 });
 
   kit.bake(batch);
 }

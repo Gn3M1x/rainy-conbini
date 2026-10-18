@@ -95,6 +95,7 @@ export function buildWorld(renderer, scene) {
   return {
     update(t, dt, camera) { fx.update(t, dt, camera); },
     hidden,
+    fxGroup: fx.group,
     glassGroup,
     reflector,
     lights,

@@ -110,6 +110,7 @@ export function buildFx(ctx) {
   const col = new THREE.Color();
 
   return {
+    group,
     update(t, dt, camera) {
       /* ---- 雨 ---- */
       const camX = camera.position.x, camZ = camera.position.z;

@@ -1,0 +1,46 @@
+{
+  "baseline": true,
+  "passed": 1,
+  "total": 4,
+  "checks": [
+    {
+      "name": "Opaque signs occlude hidden outlines",
+      "passed": false,
+      "detail": {
+        "leaking_pixels": 1376
+      }
+    },
+    {
+      "name": "Wet-ground markings keep their color across camera angles",
+      "passed": false,
+      "detail": {
+        "colors": [
+          [
+            103,
+            124,
+            166
+          ],
+          [
+            241,
+            242,
+            245
+          ]
+        ],
+        "channel_delta": 138
+      }
+    },
+    {
+      "name": "Transparent decal margins do not acquire rectangular outlines",
+      "passed": false,
+      "detail": {
+        "ghost_pixels": 1412
+      }
+    },
+    {
+      "name": "No JavaScript or shader errors",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "errors": []
+}

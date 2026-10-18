@@ -44,6 +44,9 @@ controls.autoRotateSpeed = 0.32;
 controls.update();
 
 const world = buildWorld(renderer, scene);
+const useFx = q.get('fx') !== '0';
+world.fxGroup.visible = useFx;
+world.update(0, 0, camera);
 if (q.get('shadow') === '0') {
   renderer.shadowMap.enabled = false;
   scene.traverse((o) => { if (o.isLight) o.castShadow = false; });
@@ -102,7 +105,7 @@ if (flat) {
     : new THREE.MeshBasicMaterial({ color: 0x99a0ae });
 }
 
-const post = createPost(renderer, scene, camera, world.hidden);
+const post = createPost(renderer, scene, camera);
 const usePost = q.get('post') !== '0';
 if (q.get('bloom') === '0') post.bloom.enabled = false;
 
@@ -116,14 +119,24 @@ renderer.domElement.addEventListener('touchstart', wake, { passive: true });
 /* --------------------------------- 主循环 --------------------------------- */
 const clock = new THREE.Clock();
 const fixedT = q.has('t');
-let t = fixedT ? num('t', 0) : 0;
+let t = fixedT ? Math.max(0, Math.min(120, num('t', 0) || 0)) : 0;
 let first = true;
 
+// A fixed-time snapshot must not keep integrating rain, ripples, or door motion.
+// Advance once to that time, then only refresh camera-facing geometry at dt=0.
+if (fixedT && useFx) {
+  for (let elapsed = 0; elapsed < t;) {
+    const dt = Math.min(1 / 60, t - elapsed);
+    elapsed += dt;
+    world.update(elapsed, dt, camera);
+  }
+}
+
 function frame() {
-  const dt = fixedT ? 1 / 60 : Math.min(0.05, clock.getDelta());
+  const dt = fixedT ? 0 : Math.min(0.05, clock.getDelta());
   if (!fixedT) t += dt;
 
-  world.update(t, dt, camera);
+  if (useFx) world.update(t, dt, camera);
 
   idle += dt;
   if (!controls.autoRotate && idle > 5.5) controls.autoRotate = q.get('rot') !== '0';
@@ -145,8 +158,7 @@ function onResize() {
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
   renderer.setSize(w, h);
-  post.composer.setSize(w, h);
-  post.setSize(w, h);
+  post.setSize();
 }
 window.addEventListener('resize', onResize);
 

@@ -1,6 +1,6 @@
 // 街道道具：街灯 / 电线杆 / 信号灯 / 立柱灯箱 / 自动贩卖机 / 自行车 / 护栏 / 垃圾桶 / 雨伞架 / 公告栏 / 路牌 …
 import * as THREE from 'three';
-import { C, toon, glowMat, signMat, decalMat, additiveMat } from '../core/materials.js';
+import { C, toon, glowMat, signMat, decalMat, additiveMat, GROUND_LAYER } from '../core/materials.js';
 import { Kit } from '../core/kit.js';
 import {
   poleSign, sideSign, streetSign, stopSign, parkingSign, vendingFront,
@@ -35,6 +35,7 @@ function rod(K, mat, ax, ay, az, bx, by, bz, r, seg = 8) {
 /* 地面光晕 */
 function pool(x, z, size, color, opacity, y = 0.019) {
   const m = new THREE.Mesh(new THREE.PlaneGeometry(size, size), additiveMat(poolTex(), color, opacity));
+  m.renderOrder = GROUND_LAYER.light;
   m.rotation.x = -Math.PI / 2;
   m.position.set(x, y, z);
   return m;

@@ -1,11 +1,13 @@
 # 雨夜便利店街角 · Rainy Convenience Store Corner
 
+当前版本：**v2.0.0** · [更新记录](CHANGELOG.md) · [渲染验证](docs/render-fix/verification.md)
+
 一个可以在浏览器里自由拖拽、旋转、缩放的**日式便利店街角微缩模型**：
 三渲二卡通渲染、程序化生成的贴图、湿漉漉的夜景反射，以及恰到好处的细微动态。
 
 > 单文件 HTML，不联网、不依赖任何外部资源，双击即可打开。
 
-![默认视角](preview/final2.jpg)
+![修复后默认视角](docs/render-fix/overview.png)
 
 ---
 
@@ -50,13 +52,13 @@
 
 ## 技术实现
 
-- **three.js r169**，esbuild 打包成单个 IIFE HTML（657KB，含全部代码与贴图）
+- **three.js r169**，esbuild 打包成单个 IIFE HTML（约 658KB，含全部代码与贴图）
 - **三渲二**：`MeshToonMaterial` + 自制 5 阶色阶贴图 + shader 内注入轮廓补光；
   自写后处理边缘检测（深度差 + 法线差双通道）绘制描边，叠加轻微色偏、暗角、弱泛光与 SMAA
 - **贴图**：全部用 canvas 程序化绘制（招牌、海报、饭团包装、斑马线、路面文字、井盖、贩卖机面板、玻璃雨痕…），
   仓库里没有一张外部图片
 - **湿地反射**：`Reflector` 实时镜面 + 半透明地面覆盖层，兼顾反射与材质层次
-- **合批**：按材质合并静态几何（`BufferGeometryUtils.mergeGeometries`）减少 draw call
+- **合批**：按材质与绘制层级合并静态几何（`BufferGeometryUtils.mergeGeometries`）减少 draw call
 
 ## 目录结构
 
@@ -81,21 +83,45 @@ shot.sh             # 用 headless Chrome 截图（macOS）
 
 ```bash
 npm install          # 或 npm_config_cache=.npmcache npm install
-node build.mjs       # 生成 out/rainy-conbini.html
+npm run build        # 同步生成 index.html 和 out/rainy-conbini.html
 ```
+
+## 渲染修复与验证
+
+保留原来的三渲二配色、街角布局、雨夜反射、无 UI 画面及灯箱微动，修复了以下问题：
+
+- **描边穿透**：不透明招牌和灯箱参与法线/深度遮挡；透明玻璃、光池、雨丝与不写深度的贴花不再被当成实体矩形绘制轮廓。
+- **转动时地面闪变**：为湿地面、标线细节、光池固定叠加顺序，静态合批保留 `renderOrder`，避免镜头方向改变透明层的显示顺序。
+- **高 DPI 描边错位**：所有后处理通道统一使用实际画布的整数像素尺寸，初次加载与窗口缩放使用相同描边宽度。
+- **共面闪烁**：天花板灯片与外框表面留出微小间距，避免深度争抢。
+- **固定时间仍在运动**：`?t=9&rot=0` 现在会先推进到第 9 秒，再冻结全部动效；`?fx=0` 也会真正关闭天气与动效。
+
+测试使用真实 Chrome/WebGL 渲染、像素对照和实际场景交互。执行方式（需安装 Chrome）：
+
+```bash
+python3 -m venv .venv-test
+source .venv-test/bin/activate
+pip install -r tests/requirements.txt
+npm ci
+npm run build
+npm run test:render
+```
+
+脚本自行启动临时 HTTP 服务，另行验证 `file://` 离线打开。截图及详细结果输出到被 Git 忽略的 `shots/`；
+本次保存的[修复记录](docs/render-fix/verification.md)和截图用于人工复查。
 
 ## 调试参数
 
 地址栏可加参数，方便截图与调参：
 
-`?t=9` 固定时间 · `?rot=0` 关闭自动旋转 · `?cam=x,y,z` / `?tgt=x,y,z` 指定机位 ·
-`?post=0` 关闭后处理 · `?bloom=0` · `?shadow=0` · `?fx=0`
+`?t=9` 固定完整动效到第 9 秒（范围 0–120 秒） · `?rot=0` 关闭自动旋转 · `?cam=x,y,z` / `?tgt=x,y,z` 指定机位 ·
+`?post=0` 关闭后处理 · `?bloom=0` · `?shadow=0` · `?fx=0` 关闭天气与动效
 
 常用调参位置：`src/world/index.js`（灯光强度）、`src/post/composer.js`（描边粗细与泛光）、
 `src/main.js`（初始机位与焦距）。
 
 ---
 
-![橱窗特写](preview/mid.jpg)
+![修复后橱窗特写](docs/render-fix/interior.png)
 ![鸟瞰布局](preview/top.jpg)
-![背面视角](preview/back2.jpg)
+![修复后背面视角](docs/render-fix/rear.png)
