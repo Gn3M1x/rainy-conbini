@@ -11,9 +11,9 @@
 
 ## 在线体验
 
-GitHub Pages：`https://<owner>.github.io/rainy-conbini/`（开启 Pages 后在本仓库的 Settings → Pages 里可见）
+**在线体验 → https://gn3m1x.github.io/rainy-conbini/**
 
-本地体验：直接双击 `index.html`。
+本地体验：直接双击 `index.html`（单文件，无需服务器）。
 
 ## 操作
 
