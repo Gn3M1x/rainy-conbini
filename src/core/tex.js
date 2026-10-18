@@ -243,14 +243,13 @@ export function streetSign() {
 export function stopSign() {
   return makeTex(256, 256, (x, w, h) => {
     x.clearRect(0, 0, w, h);
-    x.beginPath();
-    x.moveTo(w / 2, 8); x.lineTo(w - 8, h - 18); x.lineTo(8, h - 18); x.closePath();
+    x.beginPath(); x.moveTo(w / 2, 0); x.lineTo(w, h); x.lineTo(0, h); x.closePath();
+    x.fillStyle = '#ffffff'; x.fill();
+    x.beginPath(); x.moveTo(w / 2, 25); x.lineTo(w - 24, h - 14); x.lineTo(24, h - 14); x.closePath();
     x.fillStyle = '#c7302a'; x.fill();
-    x.lineJoin = 'round';
-    x.strokeStyle = '#ffffff'; x.lineWidth = 14; x.stroke();
     x.fillStyle = '#ffffff'; x.textAlign = 'center'; x.textBaseline = 'middle';
-    x.font = `800 62px ${JP}`;
-    x.fillText('止まれ', w / 2, h * 0.62);
+    x.font = `800 60px ${JP}`;
+    x.fillText('止まれ', w / 2, h * 0.65);
   });
 }
 

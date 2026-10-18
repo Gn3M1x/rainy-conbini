@@ -1,0 +1,171 @@
+{
+  "baseline": false,
+  "passed": 22,
+  "total": 22,
+  "checks": [
+    {
+      "name": "Opaque signs occlude hidden outlines",
+      "passed": true,
+      "detail": {
+        "leaking_pixels": 0
+      }
+    },
+    {
+      "name": "Wet-ground markings keep their color across camera angles",
+      "passed": true,
+      "detail": {
+        "colors": [
+          [
+            241,
+            242,
+            245
+          ],
+          [
+            241,
+            242,
+            245
+          ]
+        ],
+        "channel_delta": 0
+      }
+    },
+    {
+      "name": "Transparent decal margins do not acquire rectangular outlines",
+      "passed": true,
+      "detail": {
+        "ghost_pixels": 0
+      }
+    },
+    {
+      "name": "Normal pass restores render state even after a render error",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Packaged fixed-time scene is pixel-stable",
+      "passed": true,
+      "detail": {
+        "changed_pixels_above_8": 0,
+        "exact_match": true
+      }
+    },
+    {
+      "name": "No interface elements",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Full packaged scene renders at five additional camera positions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Ceiling light and housing have separate surfaces",
+      "passed": true,
+      "detail": {
+        "gap": 0.003999948501586914
+      }
+    },
+    {
+      "name": "Initial normal buffer matches drawing buffer",
+      "passed": true,
+      "detail": [
+        1280,
+        900
+      ]
+    },
+    {
+      "name": "Drag rotates the camera",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Wheel zooms in",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Right drag pans the camera",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Rain continues moving in simulation",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Traffic signal changes from red to green",
+      "passed": true,
+      "detail": [
+        [
+          0.05,
+          0.002186751462524689,
+          0.0014778417216181885
+        ],
+        [
+          0.05,
+          0.027917019481289843,
+          0.00153567218637261
+        ],
+        [
+          0.02732089163382382,
+          0.7454042095350284,
+          0.2541520943200296
+        ]
+      ]
+    },
+    {
+      "name": "Automatic doors still open and close",
+      "passed": true,
+      "detail": {
+        "min": -0.71,
+        "max": -0.41000000000000003
+      }
+    },
+    {
+      "name": "Resized normal buffer matches compositor",
+      "passed": true,
+      "detail": [
+        900,
+        650
+      ]
+    },
+    {
+      "name": "Resize round trip preserves outline thickness and alignment",
+      "passed": true,
+      "detail": {
+        "changed_pixels": 0
+      }
+    },
+    {
+      "name": "High-DPI portrait render targets align",
+      "passed": true,
+      "detail": [
+        682,
+        1477
+      ]
+    },
+    {
+      "name": "Portrait canvas fits viewport",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Single HTML works directly from file URL",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "No external assets or network dependencies",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "No JavaScript or shader errors",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "errors": []
+}

@@ -55,7 +55,7 @@ window.worldTest = {
   const world = await esbuild.build({
     entryPoints: ['src/main.js'], bundle: true, format: 'iife', write: false,
     plugins: [{ name: 'test-only-inspection', setup(build) {
-      build.onLoad({filter:/src\/main\.js$/}, async ({path}) => ({contents: await readSource(path) + diagnostics + `\nimport { inspectGeometry } from '../tests/geometry-inspection.js';\nworldTest.geometry=()=>inspectGeometry(scene,world,globalThis.testParts);`, loader:'js'}));
+      build.onLoad({filter:/src\/main\.js$/}, async ({path}) => ({contents: await readSource(path) + diagnostics + `\nimport { inspectGeometry } from '../tests/geometry-inspection.js';\nworldTest.geometry=()=>inspectGeometry(scene,world,globalThis.testParts);\nimport { inspectStreet } from '../tests/street-inspection.js';\nworldTest.street=()=>inspectStreet(scene,globalThis.testParts);`, loader:'js'}));
       build.onLoad({filter:/src\/core\/kit\.js$/}, async ({path}) => ({contents: await readSource(path) + `
 const capturePush = Batcher.prototype.push;
 Batcher.prototype.push = function(mesh) {

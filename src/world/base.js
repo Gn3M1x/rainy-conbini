@@ -195,8 +195,8 @@ export function buildBase(batch) {
   // 井盖
   const mh = decalMat(manhole());
   detail(mh, 0.36, 0.36, -1.45, 0.017, 1.95);
-  detail(mh, 0.32, 0.32, 2.16, 0.017, 0.35);
-  detail(mh, 0.3, 0.3, 0.28, 0.017, -0.2);
+  detail(mh, 0.32, 0.32, 2.16, 0.017, -0.36);
+  detail(mh, 0.3, 0.3, 0.28, 0.017, 0.28);
 
   // 人行道分缝线
   const jointMat = toon(C.sidewalkLine, { polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });

@@ -1,0 +1,287 @@
+{
+  "passed": 0,
+  "total": 7,
+  "checks": [
+    {
+      "name": "Every overhead cable terminates on an insulator",
+      "passed": false,
+      "detail": [
+        {
+          "wire": 0,
+          "end": [
+            1.12,
+            1.9,
+            0.36
+          ]
+        },
+        {
+          "wire": 0,
+          "end": [
+            -2.4799999999999995,
+            1.8999999999999997,
+            1.1799999999999997
+          ]
+        },
+        {
+          "wire": 1,
+          "end": [
+            1.3,
+            1.885,
+            0.36
+          ]
+        },
+        {
+          "wire": 1,
+          "end": [
+            -2.3,
+            1.8850000000000005,
+            1.1800000000000002
+          ]
+        },
+        {
+          "wire": 2,
+          "end": [
+            1.48,
+            1.8699999999999999,
+            0.36
+          ]
+        },
+        {
+          "wire": 2,
+          "end": [
+            -2.1200000000000006,
+            1.8699999999999997,
+            1.1799999999999997
+          ]
+        },
+        {
+          "wire": 3,
+          "end": [
+            1.2,
+            1.84,
+            0.36
+          ]
+        },
+        {
+          "wire": 3,
+          "end": [
+            0.5000000000000001,
+            1.6999999999999993,
+            -1.7000000000000002
+          ]
+        },
+        {
+          "wire": 4,
+          "end": [
+            1.4000000000000001,
+            1.8,
+            0.36
+          ]
+        },
+        {
+          "wire": 4,
+          "end": [
+            0.3000000000000001,
+            1.6599999999999997,
+            -2.3000000000000003
+          ]
+        },
+        {
+          "wire": 5,
+          "end": [
+            -2.48,
+            1.9,
+            1.18
+          ]
+        },
+        {
+          "wire": 5,
+          "end": [
+            -2.6000000000000014,
+            1.8599999999999997,
+            2.600000000000001
+          ]
+        },
+        {
+          "wire": 6,
+          "end": [
+            1.48,
+            1.88,
+            0.36
+          ]
+        },
+        {
+          "wire": 6,
+          "end": [
+            2.6,
+            1.8000000000000005,
+            -2.6
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cables clear the roof, facade and equipment",
+      "passed": false,
+      "detail": [
+        {
+          "wire": 1,
+          "part": "3b414c"
+        },
+        {
+          "wire": 1,
+          "part": "3b414c"
+        },
+        {
+          "wire": 2,
+          "part": "3b414c"
+        },
+        {
+          "wire": 2,
+          "part": "3b414c"
+        },
+        {
+          "wire": 3,
+          "part": "262c37"
+        },
+        {
+          "wire": 3,
+          "part": "3b414c"
+        },
+        {
+          "wire": 4,
+          "part": "3a414e"
+        },
+        {
+          "wire": 6,
+          "part": "3b414c"
+        }
+      ]
+    },
+    {
+      "name": "All poles leave the tactile route clear",
+      "passed": false,
+      "detail": [
+        [
+          -1.5,
+          0.76,
+          1.16
+        ],
+        [
+          1.3,
+          1.105,
+          0.36
+        ],
+        [
+          -2.3,
+          1.105,
+          1.18
+        ],
+        [
+          -2.1304742972936745,
+          0.8999472487670177,
+          1.240596533198163
+        ],
+        [
+          1.22,
+          0.6600000000000001,
+          1.16
+        ]
+      ]
+    },
+    {
+      "name": "Manholes stay outside zebra crossings",
+      "passed": false,
+      "detail": [
+        [
+          2.16,
+          0.017,
+          0.35
+        ]
+      ]
+    },
+    {
+      "name": "Stop signs have no opaque rectangular background",
+      "passed": false,
+      "detail": {
+        "issues": [
+          {
+            "geometry": "PlaneGeometry",
+            "opaque": true
+          },
+          {
+            "geometry": "PlaneGeometry",
+            "opaque": true
+          }
+        ],
+        "triangle_area_ratios": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "name": "Roof surfaces have no overlapping coplanar faces",
+      "passed": false,
+      "detail": [
+        {
+          "a": "262c37",
+          "b": "262c37",
+          "axis": "y",
+          "side": "min"
+        },
+        {
+          "a": "262c37",
+          "b": "262c37",
+          "axis": "y",
+          "side": "max"
+        },
+        {
+          "a": "262c37",
+          "b": "262c37",
+          "axis": "y",
+          "side": "min"
+        },
+        {
+          "a": "262c37",
+          "b": "262c37",
+          "axis": "y",
+          "side": "max"
+        },
+        {
+          "a": "262c37",
+          "b": "262c37",
+          "axis": "y",
+          "side": "min"
+        },
+        {
+          "a": "262c37",
+          "b": "262c37",
+          "axis": "y",
+          "side": "max"
+        },
+        {
+          "a": "262c37",
+          "b": "262c37",
+          "axis": "y",
+          "side": "min"
+        },
+        {
+          "a": "262c37",
+          "b": "262c37",
+          "axis": "y",
+          "side": "max"
+        }
+      ]
+    },
+    {
+      "name": "Rooftop fan faces are separated from the casing",
+      "passed": false,
+      "detail": [
+        {
+          "z": -1.7700000002235174
+        }
+      ]
+    }
+  ]
+}

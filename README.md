@@ -1,13 +1,13 @@
 # 雨夜便利店街角 · Rainy Convenience Store Corner
 
-当前版本：**v2.0.1** · [更新记录](CHANGELOG.md) · [渲染验证](docs/render-fix/verification.md)
+当前版本：**v2.0.2** · [更新记录](CHANGELOG.md) · [渲染验证](docs/render-fix/verification.md)
 
 一个可以在浏览器里自由拖拽、旋转、缩放的**日式便利店街角微缩模型**：
 三渲二卡通渲染、程序化生成的贴图、湿漉漉的夜景反射，以及恰到好处的细微动态。
 
 > 单文件 HTML，不联网、不依赖任何外部资源，双击即可打开。
 
-![修复后默认视角](docs/geometry-fix/overview.png)
+![修复后默认视角](docs/street-fix/overview.png)
 
 ---
 
@@ -86,6 +86,17 @@ npm install          # 或 npm_config_cache=.npmcache npm install
 npm run build        # 同步生成 index.html 和 out/rainy-conbini.html
 ```
 
+## v2.0.2：街道布局、电线与屋顶
+
+- 电线改为三条杆间线路及两条通向屋顶接线杆的入户线；两端均落在绝缘子上，避开横担、屋顶和设备。
+- 路灯、电线杆和路牌移到盲道外的路缘设施带，移除穿过通道的斜拉线。
+- 将东侧井盖移出斑马线，店前井盖避开入口台阶。
+- 红色告示牌使用真实三角形网格，去掉透明贴图周围的不透明四边形。
+- 拆开女儿墙及压顶的重叠面，重新安放空调风机圆盘与机壳，消除共面争抢。
+- 新增 7 项街道与屋顶检查，连同原有检查共 35 项通过。
+
+[街道与屋顶修复记录、近景截图](docs/street-fix/verification.md)
+
 ## v2.0.1：门、墙角与自行车
 
 - 自动门移到独立滑动轨道平面，整段开合行程避开固定立柱与玻璃。
@@ -118,6 +129,8 @@ npm ci
 npm run build
 npm run test:render
 npm run test:geometry
+npm run test:street
+# 或 npm test 一次执行全部 35 项检查
 ```
 
 脚本自行启动临时 HTTP 服务，另行验证 `file://` 离线打开。截图及详细结果输出到被 Git 忽略的 `shots/`；

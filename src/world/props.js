@@ -10,12 +10,13 @@ import {
 
 /* 关键道具位置（供灯光/动效对齐） */
 export const POS = {
-  streetLamp: [-1.5, 1.16],
+  streetLamp: [-1.5, 1.295],
   poleSign: [-2.4, 0.74],
-  poleA: [1.3, 0.36],
-  poleB: [-2.3, 1.18],
-  signal: [1.6, 1.3],
+  poleA: [1.54, 0.30],
+  poleB: [-2.38, 1.295],
+  signal: [1.52, 1.295],
   vend: [[0.8, -0.78], [0.8, -1.5]],
+  roadSign: [0.92, 1.295],
   bins: [0.9, 0.62],
   umbrella: [-0.94, -0.36],
 };
@@ -90,13 +91,13 @@ export function buildProps(batch, ctx) {
   /* ============================== 电线杆 ============================== */
   const poles = [POS.poleA, POS.poleB];
   poles.forEach(([x, z], i) => {
-    K.cylB(toon(C.poleConcrete), 0.045, 0.06, 2.15, 10, x, 0.03, z);
+    K.cylB(toon(C.poleConcrete), 0.045, 0.06, 2.28, 10, x, 0.03, z);
     // 横担
-    K.box(dark, 0.5, 0.035, 0.035, x, 1.86, z);
-    K.box(dark, 0.34, 0.03, 0.03, x, 2.02, z);
-    // 绝缘子
-    for (let k = 0; k < 4; k++) {
-      K.cylB(toon(0xd8dce2), 0.016, 0.02, 0.05, 6, x - 0.2 + k * 0.133, 1.88, z);
+    K.box(dark, 0.5, 0.035, 0.035, x, 2.115, z + 0.08);
+    K.box(dark, 0.06, 0.035, 0.12, x, 2.115, z + 0.04);
+    // Wires terminate exactly on the exposed tops of the porcelain insulators.
+    for (const offset of [-0.16, 0, 0.16]) {
+      K.cylB(toon(0xd8dce2), 0.016, 0.02, 0.06, 8, x + offset, 2.13, z + 0.08);
     }
     // 变压器（一根杆上）
     if (i === 0) {
@@ -105,10 +106,8 @@ export function buildProps(batch, ctx) {
     }
     // 杆上小箱
     K.boxB(toon(0x7d848e), 0.1, 0.16, 0.08, x - 0.06, 1.2, z + 0.03);
-    // 拉线
-    if (i === 1) rod(K, dark, x, 1.75, z, x + 0.34, 0.05, z + 0.12, 0.008, 5);
   });
-  // 电线：两杆之间 + 拉到便利店屋顶 + 出画面
+  // Three supported pole-to-pole spans, plus two feeds to a roof service mast.
   const wireMat = toon(0x14161c);
   const a = POS.poleA, b = POS.poleB;
   const sag = (p0, p1, h, n = 24) => {
@@ -123,15 +122,20 @@ export function buildProps(batch, ctx) {
     }
     return pts;
   };
-  for (let k = 0; k < 3; k++) {
-    K.tube(wireMat, sag([a[0] - 0.18 + k * 0.18, 1.9 - k * 0.015, a[1]], [b[0] - 0.18 + k * 0.18, 1.9 - k * 0.015, b[1]], 0.16), 0.006, 22, 4);
+  const anchor = (pole, offset) => [pole[0] + offset, 2.19, pole[1] + 0.08];
+  for (const offset of [-0.16, 0, 0.16]) {
+    K.tube(wireMat, sag(anchor(a, offset), anchor(b, offset), 0.12), 0.006, 32, 6);
   }
-  // 从 A 杆拉到便利店屋顶
-  K.tube(wireMat, sag([a[0] - 0.1, 1.84, a[1]], [0.5, 1.7, -1.7], 0.12), 0.006, 20, 4);
-  K.tube(wireMat, sag([a[0] + 0.1, 1.8, a[1]], [0.3, 1.66, -2.3], 0.14), 0.005, 20, 4);
-  // 出画面方向的两根（拉到基座边缘外）
-  K.tube(wireMat, sag([b[0] - 0.18, 1.9, b[1]], [-2.6, 1.86, 2.6], 0.18), 0.006, 20, 4);
-  K.tube(wireMat, sag([a[0] + 0.18, 1.88, a[1]], [2.6, 1.8, -2.6], 0.2), 0.005, 20, 4);
+  // The raised service mast keeps both incoming wires above the parapet and
+  // equipment. Its conduit enters the roof through a visible flashing collar.
+  const mastX = 0.40, mastZ = -0.65;
+  K.cylB(toon(0x7d848e), 0.055, 0.055, 0.018, 12, mastX, 1.626, mastZ);
+  K.cylB(metal, 0.018, 0.018, 0.424, 10, mastX, 1.636, mastZ);
+  K.box(dark, 0.22, 0.02, 0.035, mastX, 2.067, mastZ);
+  for (const [offset, sourceOffset] of [[-0.06, -0.16], [0.06, 0]]) {
+    K.cylB(toon(0xd8dce2), 0.012, 0.015, 0.065, 8, mastX + offset, 2.075, mastZ);
+    K.tube(wireMat, sag(anchor(a, sourceOffset), [mastX + offset, 2.14, mastZ], 0.04), 0.005, 28, 6);
+  }
 
   /* ============================== 交通信号灯 ============================== */
   {
@@ -280,7 +284,7 @@ export function buildProps(batch, ctx) {
 
   /* ============================== 路牌 ============================== */
   {
-    const x = 1.22, z = 1.16;
+    const [x, z] = POS.roadSign;
     K.cylB(steel, 0.022, 0.026, 1.24, 8, x, 0.04, z);
     const ss = streetSign();
     const m = signMat(ss, 1.1);
@@ -292,9 +296,13 @@ export function buildProps(batch, ctx) {
     p2.rotation.y = 0.25 + Math.PI;
     p2.position.z = z - 0.03;
     glassGroupPush(ctx, p2);
-    // 止まれ 圆牌
+    // A true triangular silhouette has no rectangular pixels or depth behind it.
     const stop = signMat(stopSign(), 1.0);
-    const sp = new THREE.Mesh(new THREE.PlaneGeometry(0.2, 0.2), stop);
+    const triangle = new THREE.BufferGeometry();
+    triangle.setAttribute('position', new THREE.Float32BufferAttribute([-.1,-.1,0, .1,-.1,0, 0,.1,0],3));
+    triangle.setAttribute('uv', new THREE.Float32BufferAttribute([0,0, 1,0, .5,1],2));
+    triangle.computeVertexNormals();
+    const sp = new THREE.Mesh(triangle, stop);
     sp.position.set(x, 0.86, z + 0.03);
     sp.rotation.y = 0.25;
     glassGroupPush(ctx, sp);

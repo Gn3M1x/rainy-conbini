@@ -1,0 +1,47 @@
+{
+  "passed": 7,
+  "total": 7,
+  "checks": [
+    {
+      "name": "Every overhead cable terminates on an insulator",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "Cables clear the roof, facade and equipment",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "All poles leave the tactile route clear",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "Manholes stay outside zebra crossings",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "Stop signs have no opaque rectangular background",
+      "passed": true,
+      "detail": {
+        "issues": [],
+        "triangle_area_ratios": [
+          0.5,
+          0.5
+        ]
+      }
+    },
+    {
+      "name": "Roof surfaces have no overlapping coplanar faces",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "Rooftop fan faces are separated from the casing",
+      "passed": true,
+      "detail": []
+    }
+  ]
+}

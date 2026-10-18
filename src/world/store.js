@@ -273,15 +273,28 @@ export function buildStore(batch, ctx) {
   const pwt = 0.055, phg = 0.09;
   K.boxB(M.roofD, W + 0.16, phg, pwt, cx, pr, z1 - 0.005);
   K.boxB(M.roofD, W + 0.16, phg, pwt, cx, pr, z0 + 0.005);
-  K.boxB(M.roofD, pwt, phg, D + 0.01, x0 + 0.005, pr, cz);
-  K.boxB(M.roofD, pwt, phg, D + 0.01, x1 - 0.005, pr, cz);
-  K.box(toon(0x8a929e), W + 0.15, 0.012, pwt + 0.01, cx, pr + phg, z1 - 0.005);
-  K.box(toon(0x8a929e), W + 0.15, 0.012, pwt + 0.01, cx, pr + phg, z0 + 0.005);
-  // 屋顶空调外机 + 风机
+  const sideLength = D - 0.01 - pwt;
+  K.boxB(M.roofD, pwt, phg, sideLength, x0 + 0.005, pr, cz);
+  K.boxB(M.roofD, pwt, phg, sideLength, x1 - 0.005, pr, cz);
+  const coping = toon(0x8a929e);
+  K.box(coping, W + 0.15, 0.012, pwt + 0.01, cx, pr + phg, z1 - 0.005);
+  K.box(coping, W + 0.15, 0.012, pwt + 0.01, cx, pr + phg, z0 + 0.005);
+  K.box(coping, pwt + 0.01, 0.012, sideLength - 0.01, x0 + 0.005, pr + phg, cz);
+  K.box(coping, pwt + 0.01, 0.012, sideLength - 0.01, x1 - 0.005, pr + phg, cz);
+  // Roof AC sits on two feet; the fan and bezel are in front of the casing,
+  // rather than sharing the casing's front plane.
   const acY = pr + 0.02;
-  K.boxB(M.steel, 0.34, 0.2, 0.26, -0.95, acY, -1.9);
-  K.cyl(M.dark, 0.11, 0.11, 0.02, 14, -0.95, acY + 0.2, -1.78, { rx: Math.PI / 2 });
-  K.cyl(M.roofD, 0.12, 0.12, 0.02, 14, -0.95, acY + 0.2, -1.88, { rx: Math.PI / 2 });
+  for (const footX of [-1.065, -0.835]) K.boxB(M.roofD, 0.055, 0.032, 0.22, footX, pr + 0.004, -1.9);
+  const unitY = pr + 0.034;
+  K.boxB(M.steel, 0.34, 0.22, 0.26, -0.95, unitY, -1.9);
+  const fanY = unitY + 0.11, fanZ = -1.9 + 0.13;
+  K.cyl(M.roofD, 0.094, 0.094, 0.008, 24, -0.95, fanY, fanZ + 0.008, { rx: Math.PI / 2 });
+  K.cyl(M.dark, 0.082, 0.082, 0.006, 24, -0.95, fanY, fanZ + 0.016, { rx: Math.PI / 2 });
+  for (let i=0;i<4;i++) {
+    const angle=i*Math.PI/2;
+    K.box(M.aluD, 0.05, 0.008, 0.003, -0.95+Math.cos(angle)*0.039, fanY+Math.sin(angle)*0.039, fanZ+0.024, {rz:angle});
+  }
+  K.cyl(M.steel, 0.014, 0.014, 0.006, 12, -0.95, fanY, fanZ+0.029, {rx:Math.PI/2});
   // 高位水箱
   K.cylB(toon(0x8f97a2), 0.15, 0.15, 0.26, 14, 0.16, acY + 0.08, -2.06);
   K.cylB(M.dark, 0.155, 0.155, 0.02, 14, 0.16, acY + 0.34, -2.06);

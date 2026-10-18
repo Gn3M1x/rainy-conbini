@@ -1,13 +1,15 @@
 {
   "name": "rainy-conbini",
   "private": true,
-  "version": "2.0.1",
+  "version": "2.0.2",
   "type": "module",
   "description": "雨夜便利店街角微缩模型 — Three.js 三渲二场景（无 Blender）",
   "scripts": {
     "build": "node build.mjs",
     "test:render": "node tests/build-fixture.mjs && python3 tests/rendering.py",
-    "test:geometry": "node tests/build-fixture.mjs && python3 tests/geometry.py"
+    "test:geometry": "node tests/build-fixture.mjs && python3 tests/geometry.py",
+    "test:street": "node tests/build-fixture.mjs && python3 tests/street.py",
+    "test": "node tests/build-fixture.mjs && python3 tests/rendering.py && python3 tests/geometry.py && python3 tests/street.py"
   },
   "dependencies": {
     "three": "0.169.0"

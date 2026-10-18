@@ -5,7 +5,7 @@ import { Batcher, Products } from '../core/kit.js';
 import { toon } from '../core/materials.js';
 import { BASE, buildBase } from './base.js';
 import { buildStore } from './store.js';
-import { buildProps } from './props.js';
+import { buildProps, POS } from './props.js';
 import { buildFx } from './fx.js';
 
 export function buildWorld(renderer, scene) {
@@ -84,7 +84,7 @@ export function buildWorld(renderer, scene) {
     inB: warm(0xffd8a8, 1.7, 2.2, 1.9, -0.15, 1.0, -1.95),
     fridge: warm(0xc2e0ff, 1.3, 1.6, 2.0, -1.6, 0.85, -2.15),
     canopy: warm(0xffb877, 1.5, 1.8, 1.9, -0.25, 0.9, -0.1),
-    street: warm(0xd8e8ff, 3.2, 4.2, 1.6, -1.5, 1.5, 1.55),
+    street: warm(0xd8e8ff, 3.2, 4.2, 1.6, POS.streetLamp[0], 1.5, POS.streetLamp[1] + 0.36),
     vend: warm(0xd8e8ff, 1.5, 1.9, 1.9, 1.02, 0.62, -1.12),
     spill: warm(0xff7a52, 1.2, 2.4, 1.9, -0.5, 1.35, 0.18),
   };
