@@ -5,3 +5,6 @@ shots/
 .npmcache/
 .DS_Store
 *.log
+
+# 便于直接双击的易读文件名副本（由 out/rainy-conbini.html 复制）
+雨夜便利店街角.html
