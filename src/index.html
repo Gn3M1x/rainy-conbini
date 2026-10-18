@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>雨夜のコンビニ — 微縮模型</title>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #05070c; }
+  #app { display: block; width: 100vw; height: 100vh; cursor: grab; touch-action: none; }
+  #app:active { cursor: grabbing; }
+  #veil { position: fixed; inset: 0; background: #05070c; pointer-events: none; opacity: 1; transition: opacity 1.4s ease; }
+  #veil.gone { opacity: 0; }
+</style>
+</head>
+<body>
+<canvas id="app"></canvas>
+<div id="veil"></div>
+<script>/*__BUNDLE__*/</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+node_modules/
+out/
+shots/
+.chrome*
+.npmcache/
+.DS_Store
+*.log

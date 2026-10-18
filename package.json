@@ -1,0 +1,16 @@
+{
+  "name": "rainy-conbini",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "雨夜便利店街角微缩模型 — Three.js 三渲二场景（无 Blender）",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "three": "0.169.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.24.0"
+  }
+}
