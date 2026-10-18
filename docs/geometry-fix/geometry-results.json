@@ -1,0 +1,71 @@
+{
+  "passed": 6,
+  "total": 6,
+  "checks": [
+    {
+      "name": "Sliding doors clear structural posts through full open/close cycles",
+      "passed": true,
+      "detail": {
+        "collision_samples": 0,
+        "examples": []
+      }
+    },
+    {
+      "name": "Front-left facade has no overlapping coplanar exterior faces",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "All three bicycles have wheels aligned with their frames",
+      "passed": true,
+      "detail": [
+        {
+          "valid": true,
+          "axisAlignment": 8.881784197001252e-16,
+          "diameterToWheelbase": 0.5000000000000001
+        },
+        {
+          "valid": true,
+          "axisAlignment": 2.2898349882893854e-16,
+          "diameterToWheelbase": 0.5000000000000001
+        },
+        {
+          "valid": true,
+          "axisAlignment": 3.0531133177191805e-16,
+          "diameterToWheelbase": 0.5000000000000001
+        }
+      ]
+    },
+    {
+      "name": "Bicycle wheel proportions preserve a readable silhouette",
+      "passed": true,
+      "detail": [
+        {
+          "valid": true,
+          "axisAlignment": 8.881784197001252e-16,
+          "diameterToWheelbase": 0.5000000000000001
+        },
+        {
+          "valid": true,
+          "axisAlignment": 2.2898349882893854e-16,
+          "diameterToWheelbase": 0.5000000000000001
+        },
+        {
+          "valid": true,
+          "axisAlignment": 3.0531133177191805e-16,
+          "diameterToWheelbase": 0.5000000000000001
+        }
+      ]
+    },
+    {
+      "name": "Bicycles clear walls, vending machines, crates and other solid props",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "All bicycle components stay on the square base",
+      "passed": true,
+      "detail": []
+    }
+  ]
+}

@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { C, toon, glowMat, signMat, decalMat, additiveMat, GROUND_LAYER } from '../core/materials.js';
 import { Kit } from '../core/kit.js';
+import { buildBicycle } from './bicycle.js';
 import {
   poleSign, sideSign, streetSign, stopSign, parkingSign, vendingFront,
   noticeBoard, aFrame, poolTex, windowDecal, trashLabel, poster,
@@ -207,40 +208,9 @@ export function buildProps(batch, ctx) {
   });
 
   /* ============================== 自行车 ============================== */
-  const bike = (bx, bz, ry, frameColor) => {
-    const g = new Kit();
-    const fr = toon(frameColor);
-    const r = 0.085;
-    // 轮子
-    [-0.21, 0.21].forEach((wx) => {
-      const wheel = new THREE.Mesh(new THREE.TorusGeometry(r, 0.011, 5, 16), toon(0x2a2e36));
-      wheel.rotation.y = Math.PI / 2;
-      wheel.position.set(wx, r, 0);
-      g.group.add(wheel);
-      for (let s = 0; s < 6; s++) {
-        const sp = new THREE.Mesh(new THREE.CylinderGeometry(0.0022, 0.0022, r * 2, 3), toon(0xb8bec8));
-        sp.rotation.x = (s / 6) * Math.PI;
-        sp.position.set(wx, r, 0);
-        g.group.add(sp);
-      }
-    });
-    // 车架
-    rod(g, fr, -0.21, r, 0, -0.02, r + 0.06, 0, 0.009);
-    rod(g, fr, -0.02, r + 0.06, 0, 0.13, r + 0.05, 0, 0.009);
-    rod(g, fr, 0.13, r + 0.05, 0, 0.21, r, 0, 0.009);
-    rod(g, fr, -0.02, r + 0.06, 0, 0.05, r + 0.19, 0, 0.008);
-    rod(g, fr, 0.21, r, 0, 0.06, r + 0.2, 0, 0.008);
-    rod(g, fr, -0.21, r, 0, -0.24, r + 0.13, 0, 0.008);
-    // 车把 / 座垫 / 车筐
-    rod(g, toon(0x9aa3ad), 0.06, r + 0.2, 0, 0.06, r + 0.25, 0, 0.007);
-    rod(g, toon(0x9aa3ad), 0.06, r + 0.25, -0.11, 0.06, r + 0.25, 0.11, 0.006);
-    g.box(toon(0x22262c), 0.13, 0.028, 0.06, -0.04, r + 0.22, 0);
-    g.box(toon(0xc9ced6), 0.12, 0.1, 0.14, 0.16, r + 0.24, 0, { rz: 0.1 });
-    g.bake(batch, bx, 0, bz, ry);
-  };
-  bike(0.72, -2.25, Math.PI / 2 + 0.12, C.bikeFrame);
-  bike(-2.32, 0.14, Math.PI / 2 + 0.05, C.bikeFrame2);
-  bike(1.46, -2.1, -0.35, 0x4a5a6e);
+  buildBicycle(batch, -2.10, 0.10, Math.PI / 2 + 0.12, 0x9b5364);
+  buildBicycle(batch, 1.06, -2.06, Math.PI / 2 + 0.03, 0x428d89);
+  buildBicycle(batch, 1.45, -2.06, Math.PI / 2 - 0.12, 0x667fb0);
 
   /* ============================== 垃圾桶 ============================== */
   {
@@ -348,9 +318,9 @@ export function buildProps(batch, ctx) {
   // 啤酒箱堆
   const crateMat = toon(C.crate);
   for (let i = 0; i < 3; i++) {
-    K.boxB(crateMat, 0.2, 0.12, 0.28, 1.02, 0.04 + i * 0.125, -2.42, { ry: 0.08 * i });
+    K.boxB(crateMat, 0.2, 0.12, 0.28, 0.83, 0.04 + i * 0.125, -2.42, { ry: 0.08 * i });
   }
-  K.boxB(toon(0x7a5a3e), 0.2, 0.12, 0.28, 1.02, 0.04, -2.2, { ry: 0.02 });
+  K.boxB(toon(0x7a5a3e), 0.2, 0.12, 0.28, 0.83, 0.04, -2.2, { ry: 0.02 });
   // 拖把桶
   K.cylB(toon(0x5a7a68), 0.05, 0.045, 0.16, 8, 0.9, 0.04, 0.05);
   rod(K, toon(0x7a6a4a), 0.9, 0.2, 0.05, 0.94, 0.6, 0.02, 0.008);

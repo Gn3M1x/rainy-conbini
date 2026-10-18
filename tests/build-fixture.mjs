@@ -3,7 +3,11 @@ import { writeFile, mkdir, readFile } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 
 await mkdir('shots', { recursive: true });
-const baseline = process.argv[2];
+const geometryRef = process.argv[2] === '--geometry-baseline' ? process.argv[3] : null;
+const baseline = geometryRef ? null : process.argv[2];
+const readSource = (path) => geometryRef
+  ? execFileSync('git', ['show', `${geometryRef}:${path.slice(process.cwd().length + 1)}`], {encoding:'utf8'})
+  : readFile(path,'utf8');
 const plugins = baseline ? [{
   name: 'original-render-path',
   setup(build) {
@@ -51,9 +55,16 @@ window.worldTest = {
   const world = await esbuild.build({
     entryPoints: ['src/main.js'], bundle: true, format: 'iife', write: false,
     plugins: [{ name: 'test-only-inspection', setup(build) {
-      build.onLoad({filter:/src\/main\.js$/}, async ({path}) => ({contents: await readFile(path,'utf8') + diagnostics, loader:'js'}));
+      build.onLoad({filter:/src\/main\.js$/}, async ({path}) => ({contents: await readSource(path) + diagnostics + `\nimport { inspectGeometry } from '../tests/geometry-inspection.js';\nworldTest.geometry=()=>inspectGeometry(scene,world,globalThis.testParts);`, loader:'js'}));
+      build.onLoad({filter:/src\/core\/kit\.js$/}, async ({path}) => ({contents: await readSource(path) + `
+const capturePush = Batcher.prototype.push;
+Batcher.prototype.push = function(mesh) {
+  (globalThis.testParts ||= []).push({geometry:mesh.geometry,matrix:mesh.matrixWorld.clone(),material:mesh.material,parent:mesh.parent.uuid,name:mesh.name});
+  return capturePush.call(this,mesh);
+};`, loader:'js'}));
+      if(geometryRef) build.onLoad({filter:/src\/.*\.js$/}, async ({path}) => ({contents:await readSource(path),loader:'js'}));
     }}],
   });
   const template = await readFile('src/index.html','utf8');
-  await writeFile('shots/world-fixture.html', template.replace('/*__BUNDLE__*/', () => world.outputFiles[0].text));
+  await writeFile(geometryRef ? 'shots/world-fixture-v2.html' : 'shots/world-fixture.html', template.replace('/*__BUNDLE__*/', () => world.outputFiles[0].text));
 }

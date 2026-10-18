@@ -102,22 +102,27 @@ export function buildStore(batch, ctx) {
   const x0 = S.x0, x1 = S.x1, z0 = S.z0, z1 = S.z1;
   const W = x1 - x0, D = z1 - z0;
   const cx = (x0 + x1) / 2, cz = (z0 + z1) / 2;
+  const facadeBack = z1 - 0.10;
+  const facadeDepth = 0.16;
+  const sillHeight = 0.10;
+  const wallDepth = facadeBack - z0;
+  const wallCenterZ = (z0 + facadeBack) / 2;
 
   /* =============================== 地坪 =============================== */
-  K.boxB(toon(0x8e8b83), W, S.floorY, D, cx, 0, cz);
+  K.boxB(toon(0x8e8b83), W, S.floorY, wallDepth, cx, 0, wallCenterZ);
   K.floorPlane(toon(0xffffff, { map: floorTile() }), W - 0.1, D - 0.1, cx, S.floorY + 0.002, cz);
 
   /* =============================== 墙体 =============================== */
   const wt = 0.08;
   // 西墙
-  K.boxB(M.wall, wt, S.signTop, D, x0 + wt / 2, 0, cz);
+  K.boxB(M.wall, wt, S.signTop - S.floorY, wallDepth, x0 + wt / 2, S.floorY, wallCenterZ);
   // 东墙
-  K.boxB(M.wall, wt, S.signTop, D, x1 - wt / 2, 0, cz);
+  K.boxB(M.wall, wt, S.signTop - S.floorY, wallDepth, x1 - wt / 2, S.floorY, wallCenterZ);
   // 后墙
-  K.boxB(M.wall, W, S.signTop, wt, cx, 0, z0 + wt / 2);
+  K.boxB(M.wall, W, S.signTop - S.floorY, wt, cx, S.floorY, z0 + wt / 2);
   // 外侧哑光罩面：挡住室内点光穿墙（无阴影导致的漏光）
-  K.boxB(M.wallOut, W + 0.02, S.signTop, 0.01, cx, 0, z0 - 0.005);
-  K.boxB(M.wallOut, 0.01, S.signTop, D + 0.02, x0 - 0.005, 0, cz);
+  K.boxB(M.wallOut, W + 0.02, S.signTop - S.floorY, 0.01, cx, S.floorY, z0 - 0.005);
+  K.boxB(M.wallOut, 0.01, S.signTop - S.floorY, wallDepth, x0 - 0.005, S.floorY, wallCenterZ);
   // 室内墙裙（浅色）
   K.boxB(M.wallIn, 0.02, 0.06, D - 0.16, S.xin0 - 0.01, S.floorY, cz);
   K.boxB(M.wallIn, 0.02, 0.06, D - 0.16, S.xin1 + 0.01, S.floorY, cz);
@@ -141,12 +146,14 @@ export function buildStore(batch, ctx) {
     [x0 + 0.04, 0.08], [-1.62, 0.06], [-0.70, 0.06], [0.30, 0.06], [x1 - 0.04, 0.08],
   ];
   posts.forEach(([px, pw]) => {
-    K.box(postMat, pw, S.wallTop, 0.15, px, S.wallTop / 2, fz - 0.02);
+    // The sill, side wall and post meet at their boundaries without sharing
+    // positive-area exterior faces (the old corner flashed as the camera moved).
+    K.boxB(postMat, pw, S.wallTop - sillHeight, facadeDepth, px, sillHeight, fz - 0.02);
   });
   // 下部踢脚 + 上沿横梁
-  K.boxB(M.kick, W, 0.10, 0.16, cx, 0, fz - 0.02);
-  K.box(M.alu, W, 0.035, 0.17, cx, 0.125, fz - 0.02);
-  K.box(M.alu, W, 0.12, 0.16, cx, S.gy1 + 0.06, fz - 0.02);
+  K.boxB(M.kick, W, sillHeight, facadeDepth, cx, 0, fz - 0.02);
+  K.box(M.alu, W - wt * 2, 0.035, 0.17, cx, 0.125, fz - 0.02);
+  K.box(M.alu, W - wt * 2, 0.12, 0.16, cx, S.gy1 + 0.06, fz - 0.02);
   // 门框横轨
   K.box(M.aluD, 0.94, 0.06, 0.1, -0.18, 1.01, fz - 0.03);
   K.box(M.aluD, 0.94, 0.05, 0.1, -0.18, 0.165, fz - 0.03);
@@ -184,7 +191,7 @@ export function buildStore(batch, ctx) {
   const doorMat = glassMat(0xd8ecf8, 0.13);
   const mkPanel = (dir) => {
     const g = new THREE.Group();
-    const gw = 0.45, gh = 0.86;
+    const gw = (S.doorX1 - S.doorX0) / 2, gh = 0.86;
     // 门框：四条铝边（中间必须是空的，才能看见店内）
     const railMat = toon(C.aluminum);
     const railT = 0.045;
@@ -210,10 +217,16 @@ export function buildStore(batch, ctx) {
   };
   const doorL = mkPanel(1);
   const doorR = mkPanel(-1);
-  doorL.position.set(-0.42, (S.gy0 + S.gy1) / 2 + 0.02, fz - 0.055);
-  doorR.position.set(0.06, (S.gy0 + S.gy1) / 2 + 0.02, fz - 0.055);
+  // Sliding leaves run on an exterior track, clear of the fixed pillars and
+  // glazing for their entire travel, including the fully open right leaf.
+  const panelWidth = (S.doorX1 - S.doorX0) / 2;
+  const leftX = S.doorX0 + panelWidth / 2;
+  const rightX = S.doorX1 - panelWidth / 2;
+  const doorZ = fz + 0.095;
+  doorL.position.set(leftX, (S.gy0 + S.gy1) / 2 + 0.02, doorZ);
+  doorR.position.set(rightX, (S.gy0 + S.gy1) / 2 + 0.02, doorZ);
   doorGroup.add(doorL, doorR);
-  anim.door = { left: doorL, right: doorR, baseX: { l: -0.42, r: 0.06 } };
+  anim.door = { left: doorL, right: doorR, baseX: { l: leftX, r: rightX }, travel: 0.30 };
 
   /* ============================ 招牌带 ============================ */
   // 招牌体

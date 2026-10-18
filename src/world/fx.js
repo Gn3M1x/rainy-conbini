@@ -202,8 +202,8 @@ export function buildFx(ctx) {
         if (doorState.phase === 'open') o = ease(Math.min(1, doorState.t / 0.95));
         else if (doorState.phase === 'hold') o = 1;
         else if (doorState.phase === 'close') o = 1 - ease(Math.min(1, doorState.t / 1.25));
-        door.left.position.x = door.baseX.l - 0.3 * o;
-        door.right.position.x = door.baseX.r + 0.3 * o;
+        door.left.position.x = door.baseX.l - door.travel * o;
+        door.right.position.x = door.baseX.r + door.travel * o;
       }
 
       /* ---- 信号灯 ---- */

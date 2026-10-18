@@ -1,0 +1,186 @@
+{
+  "passed": 1,
+  "total": 6,
+  "checks": [
+    {
+      "name": "Sliding doors clear structural posts through full open/close cycles",
+      "passed": false,
+      "detail": {
+        "collision_samples": 272,
+        "examples": [
+          {
+            "side": "right",
+            "overlap": [
+              0.014999993368983278,
+              0.04500000178813934,
+              0.029999999329447746
+            ],
+            "part": "dfe3e9"
+          },
+          {
+            "side": "right",
+            "overlap": [
+              0.014999993368983278,
+              0.04500000178813934,
+              0.029999999329447746
+            ],
+            "part": "dfe3e9"
+          },
+          {
+            "side": "right",
+            "overlap": [
+              0.01500000022351744,
+              0.8600000143051147,
+              0.029999999329447746
+            ],
+            "part": "dfe3e9"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Front-left facade has no overlapping coplanar exterior faces",
+      "passed": false,
+      "detail": [
+        {
+          "a": "8e8b83",
+          "b": "f1e7d6",
+          "area": 0.008499992815406473
+        },
+        {
+          "a": "8e8b83",
+          "b": "dfe3e9",
+          "area": 0.00474999621473326
+        },
+        {
+          "a": "8e8b83",
+          "b": "3c424c",
+          "area": 0.0049999975636601255
+        },
+        {
+          "a": "f1e7d6",
+          "b": "dfe3e9",
+          "area": 0.028499983870984392
+        },
+        {
+          "a": "f1e7d6",
+          "b": "3c424c",
+          "area": 0.009999992266298713
+        },
+        {
+          "a": "f1e7d6",
+          "b": "aab3be",
+          "area": 0.0036749983780085963
+        },
+        {
+          "a": "dfe3e9",
+          "b": "3c424c",
+          "area": 0.014999998204409988
+        },
+        {
+          "a": "dfe3e9",
+          "b": "aab3be",
+          "area": 0.005250000230967999
+        }
+      ]
+    },
+    {
+      "name": "All three bicycles have wheels aligned with their frames",
+      "passed": false,
+      "detail": [
+        {
+          "valid": true,
+          "axisAlignment": 1,
+          "diameterToWheelbase": 0.4047619047619045
+        },
+        {
+          "valid": true,
+          "axisAlignment": 1,
+          "diameterToWheelbase": 0.4047619047619048
+        },
+        {
+          "valid": true,
+          "axisAlignment": 1.0000000000000002,
+          "diameterToWheelbase": 0.4047619047619048
+        }
+      ]
+    },
+    {
+      "name": "Bicycle wheel proportions preserve a readable silhouette",
+      "passed": false,
+      "detail": [
+        {
+          "valid": true,
+          "axisAlignment": 1,
+          "diameterToWheelbase": 0.4047619047619045
+        },
+        {
+          "valid": true,
+          "axisAlignment": 1,
+          "diameterToWheelbase": 0.4047619047619048
+        },
+        {
+          "valid": true,
+          "axisAlignment": 1.0000000000000002,
+          "diameterToWheelbase": 0.4047619047619048
+        }
+      ]
+    },
+    {
+      "name": "Bicycles clear walls, vending machines, crates and other solid props",
+      "passed": false,
+      "detail": [
+        {
+          "bikePart": "TorusGeometry",
+          "obstacle": "b9c2cc",
+          "overlap": [
+            0.006422449856086199,
+            0.05999999865889549,
+            0.04375752116929199
+          ]
+        },
+        {
+          "bikePart": "TorusGeometry",
+          "obstacle": "5a6068",
+          "overlap": [
+            0.029999999329447746,
+            0.15100001275539404,
+            0.015368573778681949
+          ]
+        },
+        {
+          "bikePart": "CylinderGeometry",
+          "obstacle": "5a6068",
+          "overlap": [
+            0.029542523317455882,
+            0.0878578847110726,
+            0.004259483522155438
+          ]
+        },
+        {
+          "bikePart": "CylinderGeometry",
+          "obstacle": "5a6068",
+          "overlap": [
+            0.029999999329447746,
+            0.0032999999821186343,
+            0.005556905366699283
+          ]
+        },
+        {
+          "bikePart": "CylinderGeometry",
+          "obstacle": "5a6068",
+          "overlap": [
+            0.028996478570695094,
+            0.08785788471107255,
+            0.004325325235807309
+          ]
+        }
+      ]
+    },
+    {
+      "name": "All bicycle components stay on the square base",
+      "passed": true,
+      "detail": []
+    }
+  ]
+}

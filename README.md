@@ -1,13 +1,13 @@
 # 雨夜便利店街角 · Rainy Convenience Store Corner
 
-当前版本：**v2.0.0** · [更新记录](CHANGELOG.md) · [渲染验证](docs/render-fix/verification.md)
+当前版本：**v2.0.1** · [更新记录](CHANGELOG.md) · [渲染验证](docs/render-fix/verification.md)
 
 一个可以在浏览器里自由拖拽、旋转、缩放的**日式便利店街角微缩模型**：
 三渲二卡通渲染、程序化生成的贴图、湿漉漉的夜景反射，以及恰到好处的细微动态。
 
 > 单文件 HTML，不联网、不依赖任何外部资源，双击即可打开。
 
-![修复后默认视角](docs/render-fix/overview.png)
+![修复后默认视角](docs/geometry-fix/overview.png)
 
 ---
 
@@ -52,7 +52,7 @@
 
 ## 技术实现
 
-- **three.js r169**，esbuild 打包成单个 IIFE HTML（约 658KB，含全部代码与贴图）
+- **three.js r169**，esbuild 打包成单个 IIFE HTML（约 660KB，含全部代码与贴图）
 - **三渲二**：`MeshToonMaterial` + 自制 5 阶色阶贴图 + shader 内注入轮廓补光；
   自写后处理边缘检测（深度差 + 法线差双通道）绘制描边，叠加轻微色偏、暗角、弱泛光与 SMAA
 - **贴图**：全部用 canvas 程序化绘制（招牌、海报、饭团包装、斑马线、路面文字、井盖、贩卖机面板、玻璃雨痕…），
@@ -86,6 +86,18 @@ npm install          # 或 npm_config_cache=.npmcache npm install
 npm run build        # 同步生成 index.html 和 out/rainy-conbini.html
 ```
 
+## v2.0.1：门、墙角与自行车
+
+- 自动门移到独立滑动轨道平面，整段开合行程避开固定立柱与玻璃。
+- 拆开左下角地台、侧墙、踢脚及角柱的共面重叠，修复转动时的局部闪烁。
+- 三辆自行车全部重建：正确朝向的圆轮、完整车架、辐条、挡泥板、脚踏、后货架与镂空车筐。
+- 调整停车区及右侧车辆的位置，并为箱子、贩卖机和墙体留出空间。
+- 新增 6 项真实几何检查，加上原有 22 项渲染与交互检查，共 28 项通过。
+
+[几何修复记录与近景截图](docs/geometry-fix/verification.md)
+
+![右侧自行车](docs/geometry-fix/side-bikes.png)
+
 ## 渲染修复与验证
 
 保留原来的三渲二配色、街角布局、雨夜反射、无 UI 画面及灯箱微动，修复了以下问题：
@@ -105,6 +117,7 @@ pip install -r tests/requirements.txt
 npm ci
 npm run build
 npm run test:render
+npm run test:geometry
 ```
 
 脚本自行启动临时 HTTP 服务，另行验证 `file://` 离线打开。截图及详细结果输出到被 Git 忽略的 `shots/`；
